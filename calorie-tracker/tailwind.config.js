@@ -20,14 +20,12 @@ module.exports = {
           muted: '#a1a1aa',
         },
         // Gen Z Color Palette
-        neon: {
-          pink: '#ff0080',
-          blue: '#00d4ff',
-          green: '#00ff88',
-          purple: '#8b5cf6',
-          yellow: '#fbbf24',
-          orange: '#ff6b35',
-        },
+        'neon-pink': '#ff0080',
+        'neon-blue': '#00d4ff',
+        'neon-green': '#00ff88',
+        'neon-purple': '#8b5cf6',
+        'neon-yellow': '#fbbf24',
+        'neon-orange': '#ff6b35',
         primary: {
           DEFAULT: '#ff0080', // Hot pink
           hover: '#e60073',
