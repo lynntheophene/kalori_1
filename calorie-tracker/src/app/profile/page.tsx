@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { calculateBMR, calculateDailyCalories, activityMultipliers } from '@/lib/utils'
-import { User, Target, Activity, Scale } from 'lucide-react'
+import { User, Target, Activity, Scale, Sparkles, Flame, Zap, Trophy } from 'lucide-react'
 import toast from 'react-hot-toast'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 
@@ -90,7 +90,7 @@ export default function ProfilePage() {
 
       if (error) throw error
 
-      toast.success('Profile updated successfully!')
+      toast.success('Profile updated successfully! 🚀')
       router.push('/dashboard')
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An error occurred'
@@ -109,28 +109,49 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-background relative overflow-hidden p-4">
+      {/* Animated Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background via-background-secondary to-background-tertiary" />
+      <div className="absolute inset-0 bg-gradient-genz opacity-5 animate-gradient-slow" />
+      
+      {/* Floating Elements */}
+      <div className="absolute top-20 left-10 w-16 h-16 bg-neon-pink/20 rounded-full blur-xl animate-float" />
+      <div className="absolute top-40 right-20 w-24 h-24 bg-neon-blue/20 rounded-full blur-xl animate-float" style={{ animationDelay: '2s' }} />
+      <div className="absolute bottom-40 left-20 w-20 h-20 bg-neon-green/20 rounded-full blur-xl animate-float" style={{ animationDelay: '4s' }} />
+
+      <div className="relative z-10 max-w-2xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gradient mb-2">
-            Set Up Your Profile
-          </h1>
-          <p className="text-foreground-muted">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-neon-pink to-neon-blue rounded-xl flex items-center justify-center glow-pink">
+              <User className="w-6 h-6 text-white" />
+            </div>
+            <h1 className="text-4xl font-black text-gradient">
+              Set Up Your Profile
+            </h1>
+          </div>
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Sparkles className="w-4 h-4 text-neon-pink animate-pulse" />
+            <span className="text-neon-pink font-semibold">Personalize your journey</span>
+            <Sparkles className="w-4 h-4 text-neon-pink animate-pulse" />
+          </div>
+          <p className="text-gray-400">
             Tell us about yourself to get personalized calorie recommendations
           </p>
         </div>
 
-        <Card className="glass">
+        <Card variant="glass" className="backdrop-blur-xl">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="w-5 h-5" />
-              Personal Information
+            <CardTitle className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-neon-green to-neon-blue rounded-lg flex items-center justify-center glow-green">
+                <User className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-gradient-green">Personal Information</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-8">
               {/* Basic Info */}
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-2 gap-6">
                 <Input
                   type="number"
                   label="Age"
@@ -140,12 +161,12 @@ export default function ProfilePage() {
                   required
                 />
                 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
+                <div className="space-y-3">
+                  <label className="text-sm font-semibold text-white">
                     Gender
                   </label>
                   <select
-                    className="input"
+                    className="flex h-12 w-full rounded-xl border border-gray-600/50 bg-gray-900/50 backdrop-blur-sm px-4 py-3 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-pink focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-300 hover:border-neon-pink/30"
                     value={profile.gender}
                     onChange={(e) => setProfile(prev => ({ ...prev, gender: e.target.value as 'male' | 'female' | 'other' }))}
                     required
@@ -158,7 +179,7 @@ export default function ProfilePage() {
               </div>
 
               {/* Physical Stats */}
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-2 gap-6">
                 <Input
                   type="number"
                   label="Height (cm)"
@@ -181,13 +202,13 @@ export default function ProfilePage() {
               </div>
 
               {/* Activity Level */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground flex items-center gap-2">
-                  <Activity className="w-4 h-4" />
+              <div className="space-y-3">
+                <label className="text-sm font-semibold text-white flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-neon-blue" />
                   Activity Level
                 </label>
                 <select
-                  className="input"
+                  className="flex h-12 w-full rounded-xl border border-gray-600/50 bg-gray-900/50 backdrop-blur-sm px-4 py-3 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-pink focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-300 hover:border-neon-pink/30"
                   value={profile.activity_level}
                   onChange={(e) => setProfile(prev => ({ ...prev, activity_level: e.target.value as keyof typeof activityMultipliers }))}
                   required
@@ -201,13 +222,13 @@ export default function ProfilePage() {
               </div>
 
               {/* Goal */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground flex items-center gap-2">
-                  <Target className="w-4 h-4" />
+              <div className="space-y-3">
+                <label className="text-sm font-semibold text-white flex items-center gap-2">
+                  <Target className="w-4 h-4 text-neon-green" />
                   Your Goal
                 </label>
                 <select
-                  className="input"
+                  className="flex h-12 w-full rounded-xl border border-gray-600/50 bg-gray-900/50 backdrop-blur-sm px-4 py-3 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-pink focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-300 hover:border-neon-pink/30"
                   value={profile.goal}
                   onChange={(e) => setProfile(prev => ({ ...prev, goal: e.target.value as 'lose' | 'maintain' | 'gain' }))}
                   required
@@ -220,23 +241,31 @@ export default function ProfilePage() {
 
               {/* Calorie Preview */}
               {calculatePreviewCalories() > 0 && (
-                <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
-                  <h3 className="font-semibold text-primary mb-2">Your Daily Calorie Target</h3>
-                  <p className="text-2xl font-bold text-foreground">
-                    {calculatePreviewCalories()} calories
-                  </p>
-                  <p className="text-sm text-foreground-muted mt-1">
-                    Based on your profile and {profile.goal} goal
-                  </p>
+                <div className="glass-card p-6 border border-neon-pink/30">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 bg-gradient-to-br from-neon-pink to-neon-blue rounded-lg flex items-center justify-center glow-pink">
+                      <Trophy className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className="font-bold text-gradient-pink">Your Daily Calorie Target</h3>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-4xl font-black text-gradient-green mb-2">
+                      {calculatePreviewCalories()} calories
+                    </p>
+                    <p className="text-sm text-gray-400">
+                      Based on your profile and <span className="text-neon-pink font-semibold">{profile.goal}</span> goal
+                    </p>
+                  </div>
                 </div>
               )}
 
               <Button 
                 type="submit" 
-                className="w-full" 
+                className="w-full glow-pink hover:scale-105 transform" 
                 loading={loading}
                 size="lg"
               >
+                <Zap className="w-5 h-5 mr-2" />
                 Save Profile
               </Button>
             </form>

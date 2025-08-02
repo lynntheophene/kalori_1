@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { FoodScanner } from '@/components/FoodScanner'
-import { LogOut, Plus, Target, TrendingUp, Calendar, Settings } from 'lucide-react'
+import { LogOut, Plus, Target, TrendingUp, Calendar, Settings, Sparkles, Flame, Zap, Trophy } from 'lucide-react'
 import { formatTime } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import type { User } from '@supabase/supabase-js'
@@ -106,16 +106,17 @@ export default function Dashboard() {
           meal_type: mealType,
           logged_at: new Date().toISOString()
         })
-        .select()
-        .single()
 
-      if (error) throw error
+      if (error) {
+        toast.error('Error adding food')
+        return
+      }
 
-      setFoodLogs(prev => [data, ...prev])
+      toast.success('Food added successfully!')
       setShowScanner(false)
+      await loadTodaysFoodLogs(user.id)
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Error adding food'
-      toast.error(errorMessage)
+      toast.error('Error adding food')
     }
   }
 
@@ -125,19 +126,18 @@ export default function Dashboard() {
   }
 
   const deleteFoodLog = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from('food_logs')
-        .delete()
-        .eq('id', id)
+    const { error } = await supabase
+      .from('food_logs')
+      .delete()
+      .eq('id', id)
 
-      if (error) throw error
-
-      setFoodLogs(prev => prev.filter(log => log.id !== id))
-      toast.success('Food log deleted')
-    } catch {
+    if (error) {
       toast.error('Error deleting food log')
+      return
     }
+
+    toast.success('Food deleted successfully!')
+    await loadTodaysFoodLogs(user!.id)
   }
 
   const getTotalCalories = () => {
@@ -145,10 +145,10 @@ export default function Dashboard() {
   }
 
   const getTotalMacros = () => {
-    return foodLogs.reduce((totals, log) => ({
-      protein: totals.protein + (log.protein || 0),
-      carbs: totals.carbs + (log.carbs || 0),
-      fat: totals.fat + (log.fat || 0)
+    return foodLogs.reduce((total, log) => ({
+      protein: total.protein + (log.protein || 0),
+      carbs: total.carbs + (log.carbs || 0),
+      fat: total.fat + (log.fat || 0)
     }), { protein: 0, carbs: 0, fat: 0 })
   }
 
@@ -168,22 +168,40 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-neon-pink/30 border-t-neon-pink rounded-full animate-spin"></div>
+          <div className="absolute inset-0 w-16 h-16 border-4 border-neon-blue/30 border-t-neon-blue rounded-full animate-spin" style={{ animationDelay: '0.5s' }}></div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background via-background-secondary to-background-tertiary" />
+      <div className="absolute inset-0 bg-gradient-genz opacity-5 animate-gradient-slow" />
+      
+      {/* Floating Elements */}
+      <div className="absolute top-20 left-10 w-16 h-16 bg-neon-pink/10 rounded-full blur-xl animate-float" />
+      <div className="absolute top-40 right-20 w-24 h-24 bg-neon-blue/10 rounded-full blur-xl animate-float" style={{ animationDelay: '2s' }} />
+      <div className="absolute bottom-40 left-20 w-20 h-20 bg-neon-green/10 rounded-full blur-xl animate-float" style={{ animationDelay: '4s' }} />
+
       {/* Header */}
-      <div className="bg-background-secondary border-b border-gray-600">
+      <div className="relative z-10 bg-gradient-to-r from-gray-900/50 to-gray-800/50 backdrop-blur-xl border-b border-gray-600/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <h1 className="text-2xl font-bold text-gradient">CalorieTracker</h1>
+          <div className="flex justify-between items-center py-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-neon-pink to-neon-blue rounded-xl flex items-center justify-center glow-pink">
+                <Flame className="w-5 h-5 text-white" />
+              </div>
+              <h1 className="text-2xl font-black text-gradient">CalorieTracker</h1>
+            </div>
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
                 onClick={() => router.push('/profile')}
+                className="hover:bg-white/10"
               >
                 <Settings className="w-4 h-4 mr-2" />
                 Settings
@@ -191,6 +209,7 @@ export default function Dashboard() {
               <Button
                 variant="ghost"
                 onClick={handleSignOut}
+                className="hover:bg-white/10"
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Sign Out
@@ -200,69 +219,73 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Daily Summary */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <Card>
+          <Card className="card-glow">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="w-5 h-5 text-primary" />
-                Daily Progress
+              <CardTitle className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-neon-pink to-neon-blue rounded-lg flex items-center justify-center glow-pink">
+                  <Target className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-gradient-pink">Daily Progress</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <div className="flex justify-between text-sm text-foreground-muted mb-1">
+                  <div className="flex justify-between text-sm text-gray-400 mb-3">
                     <span>Calories</span>
-                    <span>{getTotalCalories()} / {profile?.target_calories || 0}</span>
+                    <span className="font-semibold">{getTotalCalories()} / {profile?.target_calories || 0}</span>
                   </div>
-                  <div className="w-full bg-background-tertiary rounded-full h-2">
+                  <div className="w-full bg-gray-800/50 rounded-full h-3 overflow-hidden">
                     <div 
-                      className="bg-primary h-2 rounded-full transition-all duration-300"
+                      className="bg-gradient-to-r from-neon-pink to-neon-blue h-3 rounded-full transition-all duration-500 glow-pink"
                       style={{ width: `${getProgressPercentage()}%` }}
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-4 text-center">
-                  <div>
-                    <div className="text-lg font-semibold text-accent">
+                  <div className="glass-card p-4">
+                    <div className="text-2xl font-bold text-gradient-green mb-1">
                       {Math.round(getTotalMacros().protein)}g
                     </div>
-                    <div className="text-xs text-foreground-muted">Protein</div>
+                    <div className="text-xs text-gray-400">Protein</div>
                   </div>
-                  <div>
-                    <div className="text-lg font-semibold text-primary">
+                  <div className="glass-card p-4">
+                    <div className="text-2xl font-bold text-gradient-pink mb-1">
                       {Math.round(getTotalMacros().carbs)}g
                     </div>
-                    <div className="text-xs text-foreground-muted">Carbs</div>
+                    <div className="text-xs text-gray-400">Carbs</div>
                   </div>
-                  <div>
-                    <div className="text-lg font-semibold text-yellow-500">
+                  <div className="glass-card p-4">
+                    <div className="text-2xl font-bold text-gradient-purple mb-1">
                       {Math.round(getTotalMacros().fat)}g
                     </div>
-                    <div className="text-xs text-foreground-muted">Fat</div>
+                    <div className="text-xs text-gray-400">Fat</div>
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="card-glow">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-accent" />
-                Today&apos;s Goal
+              <CardTitle className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-neon-green to-neon-blue rounded-lg flex items-center justify-center glow-green">
+                  <Calendar className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-gradient-green">Today's Goal</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center">
-                <div className="text-3xl font-bold text-foreground mb-2">
+                <div className="text-4xl font-black text-gradient-green mb-2">
                   {profile?.target_calories || 0}
                 </div>
-                <div className="text-foreground-muted">calories target</div>
-                <div className="mt-4 text-sm">
-                  <span className="text-accent font-medium">
+                <div className="text-gray-400 mb-4">calories target</div>
+                <div className="glass-card p-3">
+                  <span className="text-neon-green font-bold text-sm">
                     {profile?.goal?.charAt(0).toUpperCase()}{profile?.goal?.slice(1)} Weight
                   </span>
                 </div>
@@ -270,24 +293,30 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="card-glow">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-primary" />
-                Remaining
+              <CardTitle className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-neon-blue to-neon-purple rounded-lg flex items-center justify-center glow-blue">
+                  <TrendingUp className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-gradient-blue">Remaining</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center">
-                <div className="text-3xl font-bold text-foreground mb-2">
+                <div className="text-4xl font-black text-gradient-blue mb-2">
                   {Math.max(0, (profile?.target_calories || 0) - getTotalCalories())}
                 </div>
-                <div className="text-foreground-muted">calories left</div>
-                <div className="mt-4">
+                <div className="text-gray-400 mb-4">calories left</div>
+                <div className="glass-card p-3">
                   {getProgressPercentage() >= 100 ? (
-                    <div className="text-accent text-sm">Goal reached! 🎉</div>
+                    <div className="flex items-center justify-center gap-2 text-neon-green font-bold">
+                      <Trophy className="w-4 h-4" />
+                      Goal reached! 🎉
+                    </div>
                   ) : (
-                    <div className="text-primary text-sm">
+                    <div className="flex items-center justify-center gap-2 text-neon-blue font-bold">
+                      <Zap className="w-4 h-4" />
                       {Math.round(100 - getProgressPercentage())}% to go
                     </div>
                   )}
@@ -298,24 +327,46 @@ export default function Dashboard() {
         </div>
 
         {/* Meal Sections */}
-        <div className="space-y-6">
-          {['breakfast', 'lunch', 'dinner', 'snack'].map((mealType) => (
-            <Card key={mealType}>
+        <div className="space-y-8">
+          {['breakfast', 'lunch', 'dinner', 'snack'].map((mealType, index) => (
+            <Card key={mealType} className="card-glow">
               <CardHeader>
                 <div className="flex justify-between items-center">
-                  <CardTitle className="capitalize">{mealType}</CardTitle>
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                      index === 0 ? 'bg-gradient-to-br from-neon-yellow to-neon-orange glow-pink' :
+                      index === 1 ? 'bg-gradient-to-br from-neon-green to-neon-blue glow-green' :
+                      index === 2 ? 'bg-gradient-to-br from-neon-purple to-neon-pink glow-purple' :
+                      'bg-gradient-to-br from-neon-blue to-neon-green glow-blue'
+                    }`}>
+                      <Sparkles className="w-5 h-5 text-white" />
+                    </div>
+                    <CardTitle className="capitalize text-xl font-black">
+                      <span className={`${
+                        index === 0 ? 'text-gradient-pink' :
+                        index === 1 ? 'text-gradient-green' :
+                        index === 2 ? 'text-gradient-purple' :
+                        'text-gradient-blue'
+                      }`}>
+                        {mealType}
+                      </span>
+                    </CardTitle>
+                  </div>
                   <div className="flex items-center gap-4">
-                    <span className="text-sm text-foreground-muted">
-                      {getMealCalories(mealType)} calories
-                    </span>
+                    <div className="glass-card px-4 py-2">
+                      <span className="text-sm text-gray-400">
+                        {getMealCalories(mealType)} calories
+                      </span>
+                    </div>
                     <Button
                       size="sm"
                       onClick={() => {
                         setSelectedMeal(mealType as 'breakfast' | 'lunch' | 'dinner' | 'snack')
                         setShowScanner(true)
                       }}
+                      className="glow-pink hover:scale-105 transform"
                     >
-                      <Plus className="w-4 h-4 mr-1" />
+                      <Plus className="w-4 h-4 mr-2" />
                       Add Food
                     </Button>
                   </div>
@@ -323,33 +374,41 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent>
                 {getMealLogs(mealType).length === 0 ? (
-                  <div className="text-center py-8 text-foreground-muted">
-                    No food logged for {mealType}
+                  <div className="text-center py-12 text-gray-400">
+                    <div className="w-16 h-16 bg-gray-800/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Sparkles className="w-8 h-8 text-gray-600" />
+                    </div>
+                    <p className="text-lg font-medium">No food logged for {mealType}</p>
+                    <p className="text-sm">Click "Add Food" to get started!</p>
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {getMealLogs(mealType).map((log) => (
                       <div 
                         key={log.id}
-                        className="flex justify-between items-center p-3 bg-background-tertiary rounded-lg"
+                        className="glass-card p-4 hover:scale-105 transform transition-all duration-300"
                       >
-                        <div>
-                          <h4 className="font-medium">{log.food_name}</h4>
-                          <p className="text-sm text-foreground-muted">
-                            {log.quantity}g • {log.calories} cal
-                            {log.protein && ` • ${log.protein}g protein`}
-                          </p>
-                          <p className="text-xs text-foreground-muted">
-                            {formatTime(log.logged_at)}
-                          </p>
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <h4 className="font-bold text-white mb-2">{log.food_name}</h4>
+                            <div className="flex items-center gap-4 text-sm text-gray-400 mb-2">
+                              <span>{log.quantity}g</span>
+                              <span className="text-neon-pink font-semibold">{log.calories} cal</span>
+                              {log.protein && <span className="text-neon-green">• {log.protein}g protein</span>}
+                            </div>
+                            <p className="text-xs text-gray-500">
+                              {formatTime(log.logged_at)}
+                            </p>
+                          </div>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => deleteFoodLog(log.id)}
+                            className="ml-4 hover:scale-110 transform"
+                          >
+                            Delete
+                          </Button>
                         </div>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => deleteFoodLog(log.id)}
-                        >
-                          Delete
-                        </Button>
                       </div>
                     ))}
                   </div>
@@ -361,13 +420,14 @@ export default function Dashboard() {
 
         {/* Food Scanner Modal */}
         {showScanner && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <div className="bg-background rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">Add Food to {selectedMeal}</h2>
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="glass-card p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-black text-gradient">Add Food to {selectedMeal}</h2>
                 <Button
                   variant="ghost"
                   onClick={() => setShowScanner(false)}
+                  className="hover:bg-white/10"
                 >
                   ×
                 </Button>

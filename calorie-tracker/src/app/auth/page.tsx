@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
-import { Mail, Lock } from 'lucide-react'
+import { Mail, Lock, Sparkles, Flame, Zap } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 
@@ -32,7 +32,7 @@ export default function AuthPage() {
 
         if (error) throw error
 
-        toast.success('Welcome back!')
+        toast.success('Welcome back! 🚀')
         router.push('/dashboard')
       } else {
         if (formData.password !== formData.confirmPassword) {
@@ -47,7 +47,7 @@ export default function AuthPage() {
 
         if (error) throw error
 
-        toast.success('Account created! Please check your email to verify.')
+        toast.success('Account created! Please check your email to verify. ✨')
         setIsLogin(true)
       }
     } catch (error) {
@@ -59,72 +59,95 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden p-4">
+      {/* Animated Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background via-background-secondary to-background-tertiary" />
+      <div className="absolute inset-0 bg-gradient-genz opacity-5 animate-gradient-slow" />
+      
+      {/* Floating Elements */}
+      <div className="absolute top-20 left-10 w-20 h-20 bg-neon-pink/20 rounded-full blur-xl animate-float" />
+      <div className="absolute top-40 right-20 w-32 h-32 bg-neon-blue/20 rounded-full blur-xl animate-float" style={{ animationDelay: '2s' }} />
+      <div className="absolute bottom-40 left-20 w-24 h-24 bg-neon-green/20 rounded-full blur-xl animate-float" style={{ animationDelay: '4s' }} />
+      <div className="absolute bottom-20 right-10 w-16 h-16 bg-neon-purple/20 rounded-full blur-xl animate-float" style={{ animationDelay: '1s' }} />
+
+      <div className="relative z-10 w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gradient mb-2">
-            CalorieTracker
-          </h1>
-          <p className="text-foreground-muted">
-            Track your nutrition goals with ease
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-neon-pink to-neon-blue rounded-xl flex items-center justify-center glow-pink">
+              <Flame className="w-6 h-6 text-white" />
+            </div>
+            <h1 className="text-4xl font-black text-gradient">
+              CalorieTracker
+            </h1>
+          </div>
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Sparkles className="w-4 h-4 text-neon-pink animate-pulse" />
+            <span className="text-neon-pink font-semibold">Track. Crush. Repeat.</span>
+            <Sparkles className="w-4 h-4 text-neon-pink animate-pulse" />
+          </div>
+          <p className="text-gray-400">
+            Your ultimate nutrition companion
           </p>
         </div>
 
-        <Card className="glass">
+        <Card variant="glass" className="backdrop-blur-xl">
           <CardHeader>
-            <CardTitle className="text-center">
-              {isLogin ? 'Welcome Back' : 'Create Account'}
+            <CardTitle className="text-center text-2xl font-black">
+              <span className="text-gradient-pink">
+                {isLogin ? 'Welcome Back' : 'Create Account'}
+              </span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <Input
                 type="email"
-                placeholder="Email"
+                placeholder="Enter your email"
                 value={formData.email}
                 onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                icon={<Mail size={16} />}
+                icon={<Mail size={18} />}
                 required
               />
               
               <Input
                 type="password"
-                placeholder="Password"
+                placeholder="Enter your password"
                 value={formData.password}
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                icon={<Lock size={16} />}
+                icon={<Lock size={18} />}
                 required
               />
 
               {!isLogin && (
                 <Input
                   type="password"
-                  placeholder="Confirm Password"
+                  placeholder="Confirm your password"
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                  icon={<Lock size={16} />}
+                  icon={<Lock size={18} />}
                   required
                 />
               )}
 
               <Button 
                 type="submit" 
-                className="w-full" 
+                className="w-full glow-pink hover:scale-105 transform" 
                 loading={loading}
                 size="lg"
               >
+                <Zap className="w-5 h-5 mr-2" />
                 {isLogin ? 'Sign In' : 'Create Account'}
               </Button>
             </form>
 
-            <div className="mt-6 text-center">
+            <div className="mt-8 text-center">
               <button
                 type="button"
                 onClick={() => setIsLogin(!isLogin)}
-                className="text-primary hover:text-primary-hover transition-colors"
+                className="text-neon-pink hover:text-neon-blue transition-colors font-semibold hover:scale-105 transform"
               >
                 {isLogin 
-                  ? "Don&apos;t have an account? Sign up" 
+                  ? "Don't have an account? Sign up" 
                   : "Already have an account? Sign in"
                 }
               </button>

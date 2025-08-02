@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,57 +9,156 @@
   }
   
   body {
-    @apply bg-black text-white font-sans antialiased min-h-screen;
+    @apply bg-background text-foreground font-sans antialiased min-h-screen;
+    background: linear-gradient(135deg, #0a0a0a 0%, #111111 50%, #1a1a1a 100%);
   }
   
   html, body {
     overflow-x: hidden;
   }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-900;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gradient-to-b from-neon-pink to-neon-blue rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gradient-to-b from-neon-blue to-neon-green;
+  }
 }
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none;
+    @apply inline-flex items-center justify-center rounded-xl px-6 py-3 font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none relative overflow-hidden;
   }
   
   .btn-primary {
-    @apply btn bg-blue-600 text-white hover:bg-blue-700;
+    @apply btn bg-gradient-to-r from-neon-pink to-neon-blue text-white hover:from-neon-blue hover:to-neon-green shadow-lg hover:shadow-neon-pink/25 hover:scale-105 transform;
   }
   
   .btn-secondary {
-    @apply btn bg-gray-800 text-white hover:bg-gray-700 border border-gray-600;
+    @apply btn bg-gray-800/50 backdrop-blur-sm text-white hover:bg-gray-700/50 border border-gray-600/50 hover:border-neon-pink/50 shadow-lg hover:shadow-neon-pink/25;
   }
   
   .btn-accent {
-    @apply btn bg-green-600 text-white hover:bg-green-700;
+    @apply btn bg-gradient-to-r from-neon-green to-neon-blue text-white hover:from-neon-blue hover:to-neon-purple shadow-lg hover:shadow-neon-green/25 hover:scale-105 transform;
   }
   
   .btn-destructive {
-    @apply btn bg-red-600 text-white hover:bg-red-700;
+    @apply btn bg-gradient-to-r from-red-500 to-pink-500 text-white hover:from-pink-500 hover:to-red-500 shadow-lg hover:shadow-red-500/25;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-white hover:bg-white/10 border border-transparent hover:border-neon-pink/50;
   }
   
   .input {
-    @apply flex h-10 w-full rounded-lg border border-gray-600 bg-gray-900 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50;
+    @apply flex h-12 w-full rounded-xl border border-gray-600/50 bg-gray-900/50 backdrop-blur-sm px-4 py-3 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-pink focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-300 hover:border-neon-pink/30;
   }
   
   .card {
-    @apply rounded-xl border border-gray-600 bg-gray-900 p-6 shadow-lg;
+    @apply rounded-2xl border border-gray-600/30 bg-gray-900/50 backdrop-blur-md p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:border-neon-pink/30 hover:bg-gray-900/70;
+  }
+
+  .card-glow {
+    @apply card hover:shadow-neon-pink/20 hover:scale-105 transform;
   }
   
   .glass {
-    @apply backdrop-blur-sm bg-gray-900/80 border border-gray-500;
+    @apply backdrop-blur-md bg-gray-900/30 border border-gray-500/30;
+  }
+
+  .glass-card {
+    @apply backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl;
+  }
+
+  .neon-border {
+    @apply border border-transparent bg-gradient-to-r from-neon-pink via-neon-blue to-neon-green bg-clip-border;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-neon-pink via-neon-blue to-neon-green bg-clip-text text-transparent;
+  }
+
+  .text-gradient-pink {
+    @apply bg-gradient-to-r from-neon-pink to-neon-blue bg-clip-text text-transparent;
+  }
+
+  .text-gradient-green {
+    @apply bg-gradient-to-r from-neon-green to-neon-blue bg-clip-text text-transparent;
+  }
+
+  .text-gradient-purple {
+    @apply bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent;
+  }
+  
+  .glow {
+    @apply shadow-lg shadow-neon-pink/20;
+  }
+
+  .glow-pink {
+    @apply shadow-lg shadow-neon-pink/30;
+  }
+
+  .glow-blue {
+    @apply shadow-lg shadow-neon-blue/30;
+  }
+
+  .glow-green {
+    @apply shadow-lg shadow-neon-green/30;
+  }
+
+  .glow-purple {
+    @apply shadow-lg shadow-neon-purple/30;
+  }
+  
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 3s ease infinite;
+  }
+
+  .animate-gradient-slow {
+    background-size: 400% 400%;
+    animation: gradient 6s ease infinite;
+  }
+  
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .floating {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulse-glow {
+    0% { box-shadow: 0 0 20px rgba(255, 0, 128, 0.3); }
+    100% { box-shadow: 0 0 30px rgba(255, 0, 128, 0.6); }
+  }
+
+  .neon-text {
+    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
+  }
+
+  .neon-border-glow {
+    box-shadow: 0 0 20px rgba(255, 0, 128, 0.3), inset 0 0 20px rgba(255, 0, 128, 0.1);
   }
 }
 
 @layer utilities {
-  .text-gradient {
-    @apply bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent;
-  }
-  
-  .glow {
-    @apply shadow-lg shadow-blue-500/20;
-  }
-  
   .animate-gradient {
     background-size: 200% 200%;
     animation: gradient 3s ease infinite;
