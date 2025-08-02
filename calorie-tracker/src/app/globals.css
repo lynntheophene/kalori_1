@@ -99,6 +99,10 @@
   .text-gradient-purple {
     @apply bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent;
   }
+
+  .text-gradient-blue {
+    @apply bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent;
+  }
   
   .glow {
     @apply shadow-lg shadow-neon-pink/20;
