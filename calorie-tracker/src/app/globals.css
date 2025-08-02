@@ -1,0 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply dark;
+  }
+  
+  body {
+    @apply bg-black text-white font-sans antialiased min-h-screen;
+  }
+  
+  html, body {
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none;
+  }
+  
+  .btn-primary {
+    @apply btn bg-blue-600 text-white hover:bg-blue-700;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-gray-800 text-white hover:bg-gray-700 border border-gray-600;
+  }
+  
+  .btn-accent {
+    @apply btn bg-green-600 text-white hover:bg-green-700;
+  }
+  
+  .btn-destructive {
+    @apply btn bg-red-600 text-white hover:bg-red-700;
+  }
+  
+  .input {
+    @apply flex h-10 w-full rounded-lg border border-gray-600 bg-gray-900 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  
+  .card {
+    @apply rounded-xl border border-gray-600 bg-gray-900 p-6 shadow-lg;
+  }
+  
+  .glass {
+    @apply backdrop-blur-sm bg-gray-900/80 border border-gray-500;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent;
+  }
+  
+  .glow {
+    @apply shadow-lg shadow-blue-500/20;
+  }
+  
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 3s ease infinite;
+  }
+  
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+}
